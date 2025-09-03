@@ -47,10 +47,15 @@ body {
 }
 
 .nav-link {
+  background: none;
+  border: none;
   color: #666;
   text-decoration: none;
   font-weight: 500;
   transition: color 0.3s;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: inherit;
 }
 
 .nav-link:hover, .nav-link.active {
