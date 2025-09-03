@@ -3,6 +3,7 @@
     "start": "react-scripts start",
     "server": "json-server --watch server/db.json --port 3001",
     "dev": "concurrently \"npm run server\" \"npm start\"",
+    "react-scripts": "5.0.1",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
