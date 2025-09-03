@@ -1,12 +1,31 @@
 {
+  "name": "realtime-payment-engine",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "@testing-library/jest-dom": "^5.16.4",
+    "@testing-library/react": "^13.3.0",
+    "@testing-library/user-event": "^13.5.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-scripts": "5.0.1",
+    "web-vitals": "^2.1.4",
+    "json-server": "^0.17.4",
+    "concurrently": "^8.2.2"
+  },
   "scripts": {
     "start": "react-scripts start",
-    "server": "json-server --watch server/db.json --port 3001",
-    "dev": "concurrently \"npm run server\" \"npm start\"",
-    "react-scripts": "5.0.1",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "server": "json-server --watch server/db.json --port 3001",
+    "dev": "concurrently \"npm run server\" \"npm start\""
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
   },
   "browserslist": {
     "production": [
