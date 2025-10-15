@@ -13,9 +13,9 @@ const PaymentForm = ({ onPayment, isProcessing }) => {
   const [message, setMessage] = useState({ type: '', text: '' });
 
   const paymentMethods = [
-    { id: 'card', icon: '💳', name: 'Card' },
-    { id: 'applepay', icon: '📱', name: 'Apple Pay' },
-    { id: 'paypal', icon: '🅿️', name: 'PayPal' }
+    { id: 'card', icon: '/credit-card.png', name: 'Card' },
+    { id: 'applepay', icon: '/apple-pay.png', name: 'Apple Pay' },
+    { id: 'paypal', icon: '/paypal.png', name: 'PayPal' }
   ];
 
   const handleInputChange = (e) => {

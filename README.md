@@ -210,17 +210,6 @@ git push origin main
 - Geographic transaction patterns
 - System performance and health monitoring
 - Automated alerting for anomalies
-
-## Coming Soon
-
-🚀 **Advanced Features in Development:**
-- Machine learning fraud detection
-- Multi-currency automatic conversion
-- Advanced reporting and analytics
-- Mobile SDK for native apps
-- Blockchain payment support
-- Advanced webhook management
-
 ---
 
 **If this project helped you build payment systems, please give it a ⭐!**

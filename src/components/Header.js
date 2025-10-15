@@ -1,6 +1,6 @@
 import React from 'react';
 
-const Header = ({ user, balance }) => {
+const Header = ({ user, balance, onLogout }) => {
   const handleNavClick = (e) => {
     e.preventDefault();
   };
@@ -18,7 +18,22 @@ const Header = ({ user, balance }) => {
           </div>
           <div className="user-info">
             <div className="balance">Balance: ${balance.toFixed(2)}</div>
-            <div>👤 {user.name}</div>
+            <div>👤 {user?.name || 'User'}</div>
+            <button 
+              onClick={onLogout}
+              style={{
+                background: '#dc3545',
+                color: 'white',
+                border: 'none',
+                padding: '8px 15px',
+                borderRadius: '8px',
+                cursor: 'pointer',
+                fontSize: '14px',
+                fontWeight: '500'
+              }}
+            >
+              Logout
+            </button>
           </div>
         </nav>
       </div>
