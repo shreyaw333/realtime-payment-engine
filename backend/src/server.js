@@ -6,7 +6,10 @@ const db = require('./config/database');
 const app = express();
 const PORT = process.env.PORT || 3001;
 
-app.use(cors());
+app.use(cors({
+  origin: ['https://realtime-payment-engine.vercel.app', 'http://localhost:3000'],
+  credentials: true
+}));
 app.use(express.json());
 
 app.get('/api/health', (req, res) => {
