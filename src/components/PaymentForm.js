@@ -130,7 +130,9 @@ const PaymentForm = ({ onPayment, isProcessing }) => {
             className={`payment-method ${formData.paymentMethod === method.id ? 'active' : ''}`}
             onClick={() => setFormData(prev => ({ ...prev, paymentMethod: method.id }))}
           >
-            <div className="payment-method-icon">{method.icon}</div>
+            <div className="payment-method-icon">
+              <img src={method.icon} alt={method.name} style={{ width: '24px', height: '24px' }} />
+            </div>
             <div>{method.name}</div>
           </div>
         ))}
