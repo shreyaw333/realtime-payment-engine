@@ -1,53 +1,21 @@
-import React, { useState, useEffect } from 'react';
-import Login from './components/Login';
+import React, { useState } from 'react';
 import Header from './components/Header';
 import PaymentForm from './components/PaymentForm';
 import TransactionHistory from './components/TransactionHistory';
 import RealtimeUpdates from './components/RealtimeUpdates';
 import StatsGrid from './components/StatsGrid';
-import { paymentAPI, getAuthToken, removeAuthToken, userAPI } from './services/api';
+import { processPayment } from './utils/paymentProcessor';
 import './styles/App.css';
 
 function App() {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [user, setUser] = useState(null);
   const [transactions, setTransactions] = useState([]);
   const [balance, setBalance] = useState(5000.00);
   const [isProcessing, setIsProcessing] = useState(false);
   const [realtimeUpdates, setRealtimeUpdates] = useState([]);
-
-  useEffect(() => {
-  const token = getAuthToken();
-  if (token) {
-    setIsAuthenticated(true);
-    
-    userAPI.getProfile()
-      .then(data => {
-        setUser(data.user);
-        setBalance(data.user.balance);
-      })
-      .catch(err => {
-        console.error('Failed to fetch user:', err);
-        removeAuthToken();
-        setIsAuthenticated(false);
-      });
-  }
-}, []);
-
-  const handleLoginSuccess = (userData) => {
-    setUser(userData);
-    setBalance(userData.balance);
-    setIsAuthenticated(true);
-  };
-
-  const handleLogout = () => {
-    removeAuthToken();
-    setIsAuthenticated(false);
-    setUser(null);
-    setTransactions([]);
-    setBalance(0);
-    setRealtimeUpdates([]);
-  };
+  const [user] = useState({
+    name: 'Demo User',
+    email: 'demo@payflow.com'
+  });
 
   const addRealtimeUpdate = (message) => {
     const update = {
@@ -64,12 +32,8 @@ function App() {
     addRealtimeUpdate(`Processing payment of $${paymentData.amount}...`);
 
     try {
-      const result = await paymentAPI.processPayment({
-        amount: parseFloat(paymentData.amount),
-        recipient: paymentData.recipient,
-        paymentMethod: paymentData.paymentMethod
-      });
-
+      const result = await processPayment(paymentData);
+      
       const newTransaction = {
         id: result.transactionId,
         amount: parseFloat(paymentData.amount),
@@ -109,13 +73,9 @@ function App() {
     avgProcessingTime: '0.3s'
   };
 
-  if (!isAuthenticated) {
-    return <Login onLoginSuccess={handleLoginSuccess} />;
-  }
-
   return (
     <div className="App">
-      <Header user={user} balance={balance} onLogout={handleLogout} />
+      <Header user={user} balance={balance} />
       
       <div className="container">
         <div className="main-content">
