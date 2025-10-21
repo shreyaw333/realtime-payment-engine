@@ -1,4 +1,12 @@
-const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+let stripe = null;
+try {
+  if (process.env.STRIPE_SECRET_KEY) {
+    stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+  }
+} catch (error) {
+  console.error('Stripe initialization failed:', error.message);
+}
+
 const db = require('../config/database');
 
 const processPayment = async (req, res) => {
@@ -12,7 +20,7 @@ const processPayment = async (req, res) => {
 
     const transactionId = 'TXN-' + Math.random().toString(36).substr(2, 9).toUpperCase();
 
-    if (paymentMethod === 'card' && cardToken) {
+    if (paymentMethod === 'card' && cardToken && stripe) {
       try {
         const paymentIntent = await stripe.paymentIntents.create({
           amount: Math.round(amount * 100),
@@ -144,7 +152,6 @@ const transferToUser = async (req, res) => {
       return res.status(400).json({ error: 'Amount and recipient email are required' });
     }
 
-    // Find recipient by email
     db.get('SELECT * FROM users WHERE email = ?', [recipientEmail], (err, recipient) => {
       if (err) {
         return res.status(500).json({ error: 'Database error' });
@@ -158,7 +165,6 @@ const transferToUser = async (req, res) => {
         return res.status(400).json({ error: 'Cannot send money to yourself' });
       }
 
-      // Check sender balance
       db.get('SELECT balance FROM users WHERE id = ?', [senderId], (err, sender) => {
         if (err) {
           return res.status(500).json({ error: 'Database error' });
@@ -170,28 +176,23 @@ const transferToUser = async (req, res) => {
 
         const transactionId = 'TXN-' + Math.random().toString(36).substr(2, 9).toUpperCase();
 
-        // Deduct from sender
         db.run('UPDATE users SET balance = balance - ? WHERE id = ?', [amount, senderId], (err) => {
           if (err) {
             return res.status(500).json({ error: 'Error updating sender balance' });
           }
 
-          // Add to recipient
           db.run('UPDATE users SET balance = balance + ? WHERE id = ?', [amount, recipient.id], (err) => {
             if (err) {
-              // Rollback sender deduction
               db.run('UPDATE users SET balance = balance + ? WHERE id = ?', [amount, senderId]);
               return res.status(500).json({ error: 'Error updating recipient balance' });
             }
 
-            // Record transaction for sender
             db.run(
               `INSERT INTO transactions (transaction_id, user_id, amount, recipient, status, payment_method, type) 
                VALUES (?, ?, ?, ?, ?, ?, ?)`,
               [transactionId, senderId, amount, recipientEmail, 'completed', 'p2p', 'sent']
             );
 
-            // Record transaction for recipient
             db.run(
               `INSERT INTO transactions (transaction_id, user_id, amount, recipient, status, payment_method, type) 
                VALUES (?, ?, ?, ?, ?, ?, ?)`,
